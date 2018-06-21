@@ -24,6 +24,7 @@ async function main() {
   app.use(router.allowedMethods());
 
   app.listen(PORT);
+  logger.info(`Server is listening at ${PORT}`);
 }
 
 main();

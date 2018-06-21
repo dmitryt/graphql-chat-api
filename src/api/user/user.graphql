@@ -7,3 +7,24 @@ type User {
 	createdAt: String!
 	updatedAt: String!
 }
+
+type Query {
+  getMe: User!
+}
+
+input NewUser {
+	username: String!
+	password: String!
+	firstName: String
+	lastName: String
+}
+
+input UpdatedUser {
+	firstName: String
+	lastName: String
+}
+
+type Mutation {
+	newUser(input: NewUser!): User
+	updatedUser(input: UpdatedUser!): User
+}

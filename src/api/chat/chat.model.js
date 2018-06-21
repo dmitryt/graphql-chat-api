@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const { messageSchema } = require('../message/message.model');
+
 const chatSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -14,12 +16,7 @@ const chatSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
-    messages: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Message',
-      },
-    ],
+    messages: [messageSchema],
   },
   { timestamps: true },
 );

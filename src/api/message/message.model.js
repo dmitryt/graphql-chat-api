@@ -12,4 +12,7 @@ const messageSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model('Message', messageSchema);
+const model = mongoose.model('Message', messageSchema);
+model.messageSchema = messageSchema;
+
+module.exports = model;
