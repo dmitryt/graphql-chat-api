@@ -11,7 +11,7 @@ type Chat {
 
 type Query {
   allChats: [Chat]!
-  Chat(id: ID!): Chat,
+  Chat(id: ID!): Chat
 }
 
 input NewChat {
@@ -28,5 +28,5 @@ input UpdatedChat {
 type Mutation {
 	newChat(input: NewChat!): Chat
 	updateChat(input: UpdatedChat!): Chat
-	deleteChat(input: ID!)
+	deleteChat(input: ID!): Boolean
 }
