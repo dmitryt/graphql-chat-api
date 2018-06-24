@@ -1,19 +1,21 @@
 const Chat = require('./chat.model');
 
 const allChats = () => Chat.find({}).exec();
-const getChat = ({ id }) => Chat.findById(id).exec();
+const chat = ({ id }) => Chat.findById(id).exec();
 
-const newChat = ({ input }) => Chat.create(input);
+const newChat = (_, { input }) => Chat.create(input);
+const deletedChat = (_, { id }) => Chat.findByIdAndRemove(id).exec();
 
 const creator = ({ creator: id }) => ({ id });
 
 module.exports = {
   Query: {
     allChats,
+    chat,
   },
   Mutation: {
-    Chat: getChat,
     newChat,
+    deletedChat,
   },
   Chat: {
     creator,

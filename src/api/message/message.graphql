@@ -7,18 +7,13 @@ type Message {
 	updatedAt: String!
 }
 
-input Sender {
-	id: ID!
-	username: String!
-	firstName: String
-	lastName: String
-}
-
 input NewMessage {
+	chatId: ID!
+	senderId: ID!
 	content: String!
 	statusMessage: Boolean!
 }
 
 extend type Mutation {
-	newMessage(input: NewMessage!, sender: Sender!): Message
+	newMessage(input: NewMessage!): Message
 }
