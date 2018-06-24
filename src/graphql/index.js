@@ -1,16 +1,19 @@
+const path = require('path');
 const { makeExecutableSchema } = require('graphql-tools');
 
-const Chat = require('../api/chat/chat.graphql');
+const { readTextFile } = require('../util');
 const resolvers = require('./resolvers');
 
-const baseSchema = `
-  schema {
-    query: Query
-    mutation: Mutation
-  }
-`;
+const readTypes = paths => paths.map(p => readTextFile(path.resolve(__dirname, p)));
+
+const typeDefs = readTypes([
+  './base.graphql',
+  '../api/chat/chat.graphql',
+  '../api/message/message.graphql',
+  '../api/user/user.graphql',
+]);
 
 module.exports = makeExecutableSchema({
-  typeDefs: [baseSchema, Chat],
+  typeDefs,
   resolvers,
 });
