@@ -1,6 +1,5 @@
-const path = require('path');
-const { mergeResolvers, fileLoader } = require('merge-graphql-schemas');
+const { merge } = require('lodash');
 
-const resolversArray = fileLoader(path.join(__dirname, '../api/**/*.resolvers.js'));
+const chatResolvers = require('../api/chat/chat.resolvers');
 
-module.exports = mergeResolvers(resolversArray);
+module.exports = merge(chatResolvers);

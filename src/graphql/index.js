@@ -1,5 +1,16 @@
-const { buildSchema } = require('graphql');
+const { makeExecutableSchema } = require('graphql-tools');
 
-const typeDefs = require('./types');
+const Chat = require('../api/chat/chat.graphql');
+const resolvers = require('./resolvers');
 
-module.exports = buildSchema(typeDefs);
+const baseSchema = `
+  schema {
+    query: Query
+    mutation: Mutation
+  }
+`;
+
+module.exports = makeExecutableSchema({
+  typeDefs: [baseSchema, Chat],
+  resolvers,
+});

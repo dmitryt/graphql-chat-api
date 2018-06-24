@@ -5,11 +5,17 @@ const getChat = ({ id }) => Chat.findById(id).exec();
 
 const newChat = ({ input }) => Chat.create(input);
 
-module.exports = {
-  // Query
-  allChats,
-  Chat: getChat,
+const creator = ({ creator: id }) => ({ id });
 
-  // Mutation
-  newChat,
+module.exports = {
+  Query: {
+    allChats,
+  },
+  Mutation: {
+    Chat: getChat,
+    newChat,
+  },
+  Chat: {
+    creator,
+  },
 };
