@@ -2,6 +2,7 @@
 const Koa = require('koa');
 const config = require('config');
 const httpLogger = require('koa-logger');
+const jwt = require('koa-jwt');
 
 const router = require('./routes');
 const logger = require('./logger');
@@ -20,6 +21,7 @@ async function main() {
   }
 
   app.use(httpLogger());
+  app.use(jwt({ secret: config.get('secret') }));
   app.use(router.routes());
   app.use(router.allowedMethods());
 

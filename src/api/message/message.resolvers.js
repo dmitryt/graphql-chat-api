@@ -10,12 +10,10 @@ const newMessage = async (_, { input }) => {
       statusMessage,
     } = input;
     const chat = await Chat.findById(chatId);
-    console.log('Found chat', chat);
     if (!chat) {
       throw new Error(404);
     }
     const sender = await User.findById(senderId);
-    console.log('Found sender', sender);
     const message = chat.messages.create({ content, sender, statusMessage });
     chat.messages.push(message);
     await chat.save();
