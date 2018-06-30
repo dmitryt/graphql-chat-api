@@ -3,13 +3,17 @@ const Koa = require('koa');
 const config = require('config');
 const httpLogger = require('koa-logger');
 const jwt = require('koa-jwt');
+const bodyParser = require('koa-bodyparser');
 
 const router = require('./routes');
 const logger = require('./logger');
 const connectDatabase = require('./db');
+const errorHandler = require('./middlewares/error');
 
 const PORT = config.get('port');
 const app = new Koa();
+const publicPaths = ['/login', '/register'];
+const secret = config.get('secret');
 
 async function main() {
   try {
@@ -20,8 +24,10 @@ async function main() {
     throw error;
   }
 
+  app.use(bodyParser());
   app.use(httpLogger());
-  app.use(jwt({ secret: config.get('secret') }));
+  app.use(errorHandler());
+  app.use(jwt({ secret }).unless({ path: publicPaths }));
   app.use(router.routes());
   app.use(router.allowedMethods());
 
