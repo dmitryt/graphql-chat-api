@@ -26,6 +26,6 @@ input UpdatedUser {
 }
 
 extend type Mutation {
-	newUser(input: NewUser!): User
-	updatedUser(input: UpdatedUser!): User
+	signup(input: NewUser!): User
+	updateUser(input: UpdatedUser!): User
 }

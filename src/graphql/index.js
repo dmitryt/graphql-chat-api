@@ -11,6 +11,7 @@ const typeDefs = readTypes([
   '../api/chat/chat.graphql',
   '../api/message/message.graphql',
   '../api/user/user.graphql',
+  '../api/auth/auth.graphql',
 ]);
 
 module.exports = makeExecutableSchema({

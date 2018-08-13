@@ -12,7 +12,7 @@ const errorHandler = require('./middlewares/error');
 
 const PORT = config.get('port');
 const app = new Koa();
-const publicPaths = ['/login', '/register'];
+const publicPaths = ['/login', '/register', '/graphiql', '/graphql'];
 const secret = config.get('secret');
 
 async function main() {

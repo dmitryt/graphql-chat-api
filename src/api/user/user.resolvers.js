@@ -2,16 +2,22 @@ const User = require('./user.model');
 
 const getMe = (_, { id }) => User.findById(id).exec();
 
-const newUser = (_, { input }) => User.create(input);
+const signup = async (_, { input }) => {
+  const users = await User.find({ username: input.username }).exec();
+  if (users.length > 0) {
+    return Promise.reject(new Error('User with such username already exists'));
+  }
+  return User.create(input);
+};
 
-const updatedUser = (_, { id, input }) => User.findByIdAndUpdate(id, input);
+const updateUser = (_, { id, input }) => User.findByIdAndUpdate(id, input);
 
 module.exports = {
   Query: {
     getMe,
   },
   Mutation: {
-    newUser,
-    updatedUser,
+    signup,
+    updateUser,
   },
 };
