@@ -1,8 +1,6 @@
 const AuthService = require('../../services/auth');
 
-const login = (_, { input: { username, password } }) => {
-  return AuthService.login({ username, password });
-};
+const login = (_, { input: { username, password } }) => AuthService.login({ username, password });
 
 module.exports = {
   Mutation: {

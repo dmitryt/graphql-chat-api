@@ -4,6 +4,7 @@ const config = require('config');
 const httpLogger = require('koa-logger');
 const jwt = require('koa-jwt');
 const bodyParser = require('koa-bodyparser');
+const cors = require('@koa/cors');
 
 const router = require('./routes');
 const logger = require('./logger');
@@ -24,10 +25,11 @@ async function main() {
     throw error;
   }
 
+  app.use(cors());
   app.use(bodyParser());
   app.use(httpLogger());
   app.use(errorHandler());
-  app.use(jwt({ secret }).unless({ path: publicPaths }));
+  // app.use(jwt({ secret }).unless({ path: publicPaths }));
   app.use(router.routes());
   app.use(router.allowedMethods());
 

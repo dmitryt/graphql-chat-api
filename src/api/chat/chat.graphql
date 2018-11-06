@@ -1,5 +1,5 @@
 type Chat {
-	id: ID!
+	_id: ID!
 	title: String!
 	description: String
 	creator: User!
@@ -10,7 +10,7 @@ type Chat {
 }
 
 type Query {
-	allChats: [Chat]!
+	chats(type: String!, filter: String): [Chat]!
 	chat(id: ID!): Chat
 }
 
