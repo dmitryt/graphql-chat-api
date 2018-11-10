@@ -1,5 +1,4 @@
 const path = require('path');
-const { makeExecutableSchema } = require('graphql-tools');
 
 const { readTextFile } = require('../util');
 const resolvers = require('./resolvers');
@@ -14,7 +13,7 @@ const typeDefs = readTypes([
   '../api/auth/auth.graphql',
 ]);
 
-module.exports = makeExecutableSchema({
+module.exports = {
   typeDefs,
   resolvers,
-});
+};

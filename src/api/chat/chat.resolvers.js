@@ -10,10 +10,10 @@ const chats = (_, { type, filter }) => {
 };
 const chat = ({ id }) => Chat.findById(id).exec();
 
-const newChat = (_, { input }) => Chat.create(input);
-const deletedChat = (_, { id }) => Chat.findByIdAndRemove(id).exec();
+const createChat = (_, { input }) => Chat.create({ ...input, creator: ObjectId('5b2d5572b3270266e0db55ec') });
+const deleteChat = (_, { id }) => Chat.findByIdAndRemove(id).exec();
 
-const creator = ({ creator: id }) => ({ id });
+const creator = ({ creator: _id }) => ({ _id });
 
 module.exports = {
   Query: {
@@ -21,8 +21,8 @@ module.exports = {
     chat,
   },
   Mutation: {
-    newChat,
-    deletedChat,
+    createChat,
+    deleteChat,
   },
   Chat: {
     creator,

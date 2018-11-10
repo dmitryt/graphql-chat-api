@@ -6,7 +6,7 @@ const jwt = require('koa-jwt');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 
-const router = require('./routes');
+const graphqlService = require('./services/graphql');
 const logger = require('./logger');
 const connectDatabase = require('./db');
 const errorHandler = require('./middlewares/error');
@@ -15,6 +15,8 @@ const PORT = config.get('port');
 const app = new Koa();
 const publicPaths = ['/login', '/register', '/graphiql', '/graphql'];
 const secret = config.get('secret');
+
+const server = graphqlService.init(app);
 
 async function main() {
   try {
@@ -29,12 +31,11 @@ async function main() {
   app.use(bodyParser());
   app.use(httpLogger());
   app.use(errorHandler());
-  // app.use(jwt({ secret }).unless({ path: publicPaths }));
-  app.use(router.routes());
-  app.use(router.allowedMethods());
+  app.use(jwt({ secret }).unless({ path: publicPaths }));
 
-  app.listen(PORT);
-  logger.info(`Server is listening at ${PORT}`);
+  app.listen({ port: PORT }, () => {
+    logger.info(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+  });
 }
 
 main();

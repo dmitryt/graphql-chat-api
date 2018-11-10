@@ -1,5 +1,5 @@
 type Message {
-	id: ID!
+	_id: ID!
 	content: String!
 	statusMessage: Boolean!
 	sender: User!

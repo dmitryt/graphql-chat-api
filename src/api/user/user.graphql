@@ -1,7 +1,7 @@
 
 type User {
-	id: ID!
-	username: String!
+	_id: ID!
+	username: String! @unique
 	firstName: String
 	lastName: String
 	lastVisit: String
@@ -13,19 +13,12 @@ extend type Query {
 	getMe: User!
 }
 
-input NewUser {
-	username: String!
-	password: String!
-	firstName: String
-	lastName: String
-}
-
 input UpdatedUser {
 	firstName: String
 	lastName: String
 }
 
 extend type Mutation {
-	signup(input: NewUser!): User
-	updateUser(input: UpdatedUser!): User
+	signup(username: String!, password: String!): User
+	updateUser(firstName: String, lastName: String): User
 }

@@ -17,15 +17,9 @@ type Query {
 input NewChat {
 	title: String!
 	description: String
-	creator: String!
-}
-
-input UpdatedChat {
-	title: String!
-	description: String
 }
 
 type Mutation {
-	newChat(input: NewChat!): Chat
-	deletedChat(id: ID!): Boolean
+	createChat(input: NewChat!): Chat
+	deleteChat(id: ID!): Boolean
 }
