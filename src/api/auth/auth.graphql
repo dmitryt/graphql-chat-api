@@ -1,8 +1,13 @@
 type Token {
-  token: String!
+  token: String
+}
+
+type Result {
+  success: Boolean!
+  error: String
 }
 
 extend type Mutation {
 	login(username: String!, password: String!): Token
-	logout: User
+	logout: Result
 }

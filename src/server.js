@@ -2,7 +2,8 @@
 const Koa = require('koa');
 const config = require('config');
 const httpLogger = require('koa-logger');
-const jwt = require('koa-jwt');
+const koaJwt = require('koa-jwt');
+const jwt = require('jsonwebtoken');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 
@@ -16,8 +17,6 @@ const app = new Koa();
 const publicPaths = ['/login', '/register', '/graphiql', '/graphql'];
 const secret = config.get('secret');
 
-const server = graphqlService.init(app);
-
 async function main() {
   try {
     const info = await connectDatabase(config.get('mongo'));
@@ -26,12 +25,25 @@ async function main() {
     logger.error('[DB] Unable to connect to database', error);
     throw error;
   }
+  app.use(async (ctx, next) => {
+    try {
+      const token = (ctx.headers.authorization || '').split(' ')[1];
+      if (token) {
+        const { userId } = await jwt.verify(token, secret);
+        ctx.state.userId = userId;
+      }
+    } catch (e) {
 
+    }
+    await next();
+  });
   app.use(cors());
   app.use(bodyParser());
   app.use(httpLogger());
   app.use(errorHandler());
-  app.use(jwt({ secret }).unless({ path: publicPaths }));
+  app.use(koaJwt({ secret }).unless({ path: publicPaths }));
+
+  const server = graphqlService.init(app);
 
   app.listen({ port: PORT }, () => {
     logger.info(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);

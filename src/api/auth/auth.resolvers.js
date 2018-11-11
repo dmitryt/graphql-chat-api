@@ -1,17 +1,12 @@
 const AuthService = require('../../services/auth');
 
-const login = async (_, { username, password }, ctx, info) => {
+const login = async (_, { username, password }) => {
   try {
-    const result = await AuthService.login({ username, password });
-    if (!result.token) {
+    const token = await AuthService.login({ username, password });
+    if (!token) {
       throw new Error('Cannot generate the token');
     }
-    console.log('WOWOWOWOW', ctx);
-    ctx.response.cookie('dcode-token', result.token, {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60, // 1h
-    });
-    return { success: true };
+    return { token };
   } catch (e) {
     throw e;
   }

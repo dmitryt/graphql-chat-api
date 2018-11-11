@@ -18,8 +18,7 @@ async function login({ username, password }) {
   if (!isMatch) {
     return Promise.reject(new Error('Username or password is incorrect'));
   }
-  const token = await util.promisify(jwt.sign)({ userId: user._id }, secret, { expiresIn: '1h' });
-  return { token };
+  return util.promisify(jwt.sign)({ userId: user._id }, secret, { expiresIn: '1h' });
 }
 
 module.exports = {
