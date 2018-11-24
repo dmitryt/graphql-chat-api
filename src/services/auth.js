@@ -18,7 +18,7 @@ async function login({ username, password }) {
   if (!isMatch) {
     return Promise.reject(new Error('Username or password is incorrect'));
   }
-  return util.promisify(jwt.sign)({ userId: user._id }, secret, { expiresIn: '1h' });
+  return util.promisify(jwt.sign)({ userId: user._id }, secret, { expiresIn: '1d' });
 }
 
 module.exports = {

@@ -7,7 +7,8 @@ const messageSchema = new mongoose.Schema(
       ref: 'User',
     },
     content: String,
-    statusMessage: Boolean,
+    chatId: String,
+    isStatusMessage: Boolean,
   },
   { timestamps: true },
 );

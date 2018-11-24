@@ -21,4 +21,20 @@ const chatSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+chatSchema.virtual('isChatMember')
+  .set(function set(userId) {
+    this._isChatMember = this.members.includes(userId);
+  })
+  .get(function get() {
+    return this._isChatMember;
+  });
+
+chatSchema.virtual('isChatCreator')
+  .set(function set(userId) {
+    this._isChatCreator = this.creator.toString() === userId;
+  })
+  .get(function get() {
+    return this._isChatCreator;
+  });
+
 module.exports = mongoose.model('Chat', chatSchema);

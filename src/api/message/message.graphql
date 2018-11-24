@@ -1,19 +1,18 @@
 type Message {
 	_id: ID!
 	content: String!
-	statusMessage: Boolean!
+	chatId: ID!
 	sender: User!
 	createdAt: String!
 	updatedAt: String!
+  isStatusMessage: Boolean
 }
 
 input NewMessage {
 	chatId: ID!
-	senderId: ID!
 	content: String!
-	statusMessage: Boolean!
 }
 
 extend type Mutation {
-	newMessage(input: NewMessage!): Message
+	addMessage(input: NewMessage!): Message
 }

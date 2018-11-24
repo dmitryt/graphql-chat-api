@@ -1,30 +1,25 @@
 const Chat = require('../chat/chat.model');
 const User = require('../user/user.model');
 
-const newMessage = async (_, { input }) => {
-  try {
-    const {
-      chatId,
-      senderId,
-      content,
-      statusMessage,
-    } = input;
-    const chat = await Chat.findById(chatId);
-    if (!chat) {
-      throw new Error(404);
-    }
-    const sender = await User.findById(senderId);
-    const message = chat.messages.create({ content, sender, statusMessage });
-    chat.messages.push(message);
-    await chat.save();
-    return message;
-  } catch (e) {
-    return e;
+const addMessage = async (_, { input }, ctx) => {
+  const {
+    chatId,
+    content,
+  } = input;
+  const { userId } = ctx.state;
+  const chat = await Chat.findById(chatId);
+  if (!chat) {
+    throw new Error(404);
   }
+  const sender = await User.findById(userId);
+  const message = chat.messages.create({ content, sender, chatId });
+  chat.messages.push(message);
+  await chat.save();
+  return message;
 };
 
 module.exports = {
   Mutation: {
-    newMessage,
+    addMessage,
   },
 };

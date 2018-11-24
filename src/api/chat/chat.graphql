@@ -5,12 +5,14 @@ type Chat {
 	creator: User!
 	members: [User]!
 	messages: [Message]!
+  isChatMember: Boolean!
+  isChatCreator: Boolean!
 	createdAt: String!
 	updatedAt: String!
 }
 
 type Query {
-	chats(type: String!, filter: String): [Chat]!
+	chats(type: String, filter: String): [Chat]!
 	chat(id: ID!): Chat
 }
 
@@ -21,5 +23,7 @@ input NewChat {
 
 type Mutation {
 	createChat(input: NewChat!): Chat
+	joinChat(id: ID!): Chat
+	leaveChat(id: ID!): Chat
 	deleteChat(id: ID!): Boolean
 }

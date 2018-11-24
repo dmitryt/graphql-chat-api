@@ -9,13 +9,32 @@ const chats = (_, { type, filter }, ctx) => {
   }
   return query.exec();
 };
-const chat = ({ id }) => Chat.findById(id).exec();
+const chat = async (_, { id }, ctx) => {
+  const { userId } = ctx.state;
+  const instance = await Chat
+    .findById(id)
+    .populate('messages.sender')
+    .exec();
+  instance.isChatMember = userId;
+  instance.isChatCreator = userId;
+  return instance;
+};
 
 const createChat = (_, { input }, ctx) => {
   const { userId } = ctx.state;
   return Chat.create({ ...input, creator: userId });
 };
 const deleteChat = (_, { id }) => Chat.findByIdAndRemove(id).exec();
+
+const joinChat = (_, { id }, ctx) => {
+  const { userId } = ctx.state;
+  return Chat.findByIdAndUpdate(id, { $addToSet: { members: userId } }, { new: true }).exec();
+};
+
+const leaveChat = (_, { id }, ctx) => {
+  const { userId } = ctx.state;
+  return Chat.findByIdAndUpdate(id, { $pull: { members: { $eq: userId } } }, { new: true }).exec();
+};
 
 const creator = ({ creator: _id }) => ({ _id });
 
@@ -27,6 +46,8 @@ module.exports = {
   Mutation: {
     createChat,
     deleteChat,
+    joinChat,
+    leaveChat,
   },
   Chat: {
     creator,
