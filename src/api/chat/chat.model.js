@@ -23,7 +23,7 @@ const chatSchema = new mongoose.Schema(
 
 chatSchema.virtual('isChatMember')
   .set(function set(userId) {
-    this._isChatMember = this.members.includes(userId);
+    this._isChatMember = this.members.map(obj => obj.toString()).includes(userId);
   })
   .get(function get() {
     return this._isChatMember;
