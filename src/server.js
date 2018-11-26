@@ -32,9 +32,7 @@ async function main() {
         const { userId } = await jwt.verify(token, secret);
         ctx.state.userId = userId;
       }
-    } catch (e) {
-
-    }
+    } catch (e) {}
     await next();
   });
   app.use(cors());

@@ -1,6 +1,6 @@
 const User = require('./user.model');
 
-const getMe = (_, { id }) => User.findById(id).exec();
+const currentUser = (_, __, ctx) => User.findById(ctx.state.userId).exec();
 
 const signup = async (_, { username, password }) => {
   const users = await User.find({ username }).exec();
@@ -10,11 +10,12 @@ const signup = async (_, { username, password }) => {
   return User.create({ username, password });
 };
 
-const updateUser = (_, { id, input }) => User.findByIdAndUpdate(id, input);
+const updateUser = (_, { firstName, lastName }, ctx) =>
+  User.findByIdAndUpdate(ctx.state.userId, { firstName, lastName }, { new: true }).exec();
 
 module.exports = {
   Query: {
-    getMe,
+    currentUser,
   },
   Mutation: {
     signup,

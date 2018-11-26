@@ -1,5 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const Chat = require('./chat.model');
+const User = require('../user/user.model');
+const Message = require('../message/message.model');
 
 const chats = (_, { type, filter }, ctx) => {
   const { userId } = ctx.state;
@@ -10,7 +12,7 @@ const chats = (_, { type, filter }, ctx) => {
   return query.exec();
 };
 
-const prepareUser = async (query, ctx) => {
+const prepareUser = async (query, { ctx }) => {
   const { userId } = ctx.state;
   const instance = await query.populate('messages.sender').exec();
   instance.isChatMember = userId;
@@ -18,7 +20,7 @@ const prepareUser = async (query, ctx) => {
   return instance;
 };
 
-const chat = async (_, { id }, ctx) => prepareUser(Chat.findById(id), ctx);
+const chat = async (_, { id }, ctx) => prepareUser(Chat.findById(id), { ctx });
 
 const createChat = (_, { input }, ctx) => {
   const { userId } = ctx.state;
@@ -26,19 +28,29 @@ const createChat = (_, { input }, ctx) => {
 };
 const deleteChat = (_, { id }) => Chat.findByIdAndRemove(id).exec();
 
-const joinChat = (_, { id }, ctx) => {
+const joinChat = async (_, { id }, ctx) => {
   const { userId } = ctx.state;
+  const sender = await User.findById(userId);
+  const content = 'has joined the chat successfully';
   return prepareUser(
-    Chat.findByIdAndUpdate(id, { $addToSet: { members: userId } }, { new: true }),
-    ctx,
+    Chat.findByIdAndUpdate(id, {
+      $addToSet: { members: userId },
+      $push: { messages: new Message({ chatId: id, content, sender, isStatusMessage: true }) },
+    }, { new: true }),
+    { ctx },
   );
 };
 
-const leaveChat = (_, { id }, ctx) => {
+const leaveChat = async (_, { id }, ctx) => {
   const { userId } = ctx.state;
+  const sender = await User.findById(userId);
+  const content = 'has left the chat successfully';
   return prepareUser(
-    Chat.findByIdAndUpdate(id, { $pull: { members: { $in: [userId] } } }, { new: true }),
-    ctx,
+    Chat.findByIdAndUpdate(id, {
+      $pull: { members: { $in: [userId] } },
+      $push: { messages: new Message({ chatId: id, content, sender, isStatusMessage: true }) },
+    }, { new: true }),
+    { ctx },
   );
 };
 
