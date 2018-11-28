@@ -14,5 +14,5 @@ input NewMessage {
 }
 
 extend type Mutation {
-	addMessage(input: NewMessage!): Message
+	addMessage(input: NewMessage!): Message @auth
 }

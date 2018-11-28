@@ -14,7 +14,7 @@ const errorHandler = require('./middlewares/error');
 
 const PORT = config.get('port');
 const app = new Koa();
-const publicPaths = ['/login', '/register', '/graphiql', '/graphql'];
+const publicPaths = ['/graphiql', '/graphql'];
 const secret = config.get('secret');
 
 async function main() {
@@ -25,16 +25,6 @@ async function main() {
     logger.error('[DB] Unable to connect to database', error);
     throw error;
   }
-  app.use(async (ctx, next) => {
-    try {
-      const token = (ctx.headers.authorization || '').split(' ')[1];
-      if (token) {
-        const { userId } = await jwt.verify(token, secret);
-        ctx.state.userId = userId;
-      }
-    } catch (e) {}
-    await next();
-  });
   app.use(cors());
   app.use(bodyParser());
   app.use(httpLogger());

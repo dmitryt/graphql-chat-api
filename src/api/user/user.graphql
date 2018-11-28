@@ -10,10 +10,10 @@ type User {
 }
 
 extend type Query {
-	currentUser: User!
+	currentUser: User! @auth
 }
 
 extend type Mutation {
 	signup(username: String!, password: String!): User!
-	updateUser(firstName: String, lastName: String): User!
+	updateUser(firstName: String, lastName: String): User! @auth
 }

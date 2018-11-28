@@ -9,5 +9,5 @@ type Result {
 
 extend type Mutation {
 	login(username: String!, password: String!): Token
-	logout: Result
+	logout: Result @auth
 }

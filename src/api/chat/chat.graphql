@@ -12,8 +12,8 @@ type Chat {
 }
 
 type Query {
-	chats(type: String, filter: String): [Chat]!
-	chat(id: ID!): Chat
+	chats(type: String, filter: String): [Chat]! @auth
+	chat(id: ID!): Chat @auth
 }
 
 input NewChat {
@@ -22,8 +22,8 @@ input NewChat {
 }
 
 type Mutation {
-	createChat(input: NewChat!): Chat
-	joinChat(id: ID!): Chat
-	leaveChat(id: ID!): Chat
-	deleteChat(id: ID!): Boolean
+	createChat(input: NewChat!): Chat @auth
+	joinChat(id: ID!): Chat @auth
+	leaveChat(id: ID!): Chat @auth
+	deleteChat(id: ID!): Boolean @auth
 }
