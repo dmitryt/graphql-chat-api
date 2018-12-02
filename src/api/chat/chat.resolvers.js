@@ -3,13 +3,14 @@ const Chat = require('./chat.model');
 const User = require('../user/user.model');
 const Message = require('../message/message.model');
 
-const chats = (_, { type, filter }, ctx) => {
+const chats = (_, args, ctx) => {
+  const { type, query } = args;
   const { userId } = ctx.state;
-  let query = type === 'my' ? Chat.find({ creator: ObjectId(userId) }) : Chat.find({});
-  if (filter && filter.length > 3) {
-    query = query.find({ title: { $regex: filter, $options: 'i' } });
+  let result = type === 'my' ? Chat.find({ creator: ObjectId(userId) }) : Chat.find({});
+  if (query && query.length >= 3) {
+    result = result.find({ title: { $regex: query, $options: 'i' } });
   }
-  return query.exec();
+  return result.exec();
 };
 
 const prepareUser = async (query, { ctx }) => {

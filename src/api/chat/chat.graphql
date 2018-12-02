@@ -12,7 +12,7 @@ type Chat {
 }
 
 type Query {
-	chats(type: String, filter: String): [Chat]! @auth
+	chats(type: String, query: String): [Chat]! @auth
 	chat(id: ID!): Chat @auth
 }
 
