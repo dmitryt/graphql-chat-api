@@ -68,6 +68,9 @@ module.exports = {
     joinChat,
     leaveChat,
   },
+  Subscription: {
+    
+  },
   Chat: {
     creator,
   },
