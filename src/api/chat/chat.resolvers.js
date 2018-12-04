@@ -3,6 +3,9 @@ const Chat = require('./chat.model');
 const User = require('../user/user.model');
 const Message = require('../message/message.model');
 
+const CHAT_ADDED = 'CHAT_ADDED';
+const CHAT_REMOVED = 'CHAT_REMOVED';
+
 const chats = (_, args, ctx) => {
   const { type, query } = args;
   const { userId } = ctx.state;
@@ -23,11 +26,18 @@ const prepareUser = async (query, { ctx }) => {
 
 const chat = async (_, { id }, ctx) => prepareUser(Chat.findById(id), { ctx });
 
-const createChat = (_, { input }, ctx) => {
-  const { userId } = ctx.state;
-  return Chat.create({ ...input, creator: userId, members: [userId] });
+const createChat = async (_, { input }, ctx) => {
+  const { userId, pubsub } = ctx.state;
+  const result = await Chat.create({ ...input, creator: userId, members: [userId] });
+  pubsub.publish(CHAT_ADDED, { postAdded: result });
+  return result;
 };
-const deleteChat = (_, { id }) => Chat.findByIdAndRemove(id).exec();
+
+const deleteChat = async (_, { id }) => {
+  const result = await Chat.findByIdAndRemove(id).exec();
+  pubsub.publish(CHAT_REMOVED, { chatRemoved: id });
+  return result;
+};
 
 const joinChat = async (_, { id }, ctx) => {
   const { userId } = ctx.state;
@@ -55,6 +65,17 @@ const leaveChat = async (_, { id }, ctx) => {
   );
 };
 
+// Subscriptions
+const chatAdded = async (_, __, ctx) => {
+  const { pubsub } = ctx.state;
+  pubsub.asyncIterator([CHAT_ADDED]);
+};
+
+const chatRemoved = async (_, __, ctx) => {
+  const { pubsub } = ctx.state;
+  pubsub.asyncIterator([CHAT_REMOVED]);
+};
+
 const creator = ({ creator: _id }) => ({ _id });
 
 module.exports = {
@@ -69,7 +90,8 @@ module.exports = {
     leaveChat,
   },
   Subscription: {
-    
+    chatAdded,
+    chatRemoved,
   },
   Chat: {
     creator,

@@ -3,7 +3,6 @@ const Koa = require('koa');
 const config = require('config');
 const httpLogger = require('koa-logger');
 const koaJwt = require('koa-jwt');
-const jwt = require('jsonwebtoken');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 
@@ -33,9 +32,12 @@ async function main() {
 
   const server = graphqlService.init(app);
 
-  app.listen({ port: PORT }, () => {
+  const httpServer = app.listen({ port: PORT }, () => {
     logger.info(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+    logger.info(`🚀 Subscriptions ready at ws://localhost:${PORT}${server.subscriptionsPath}`);
   });
+
+  server.installSubscriptionHandlers(httpServer);
 }
 
 main();

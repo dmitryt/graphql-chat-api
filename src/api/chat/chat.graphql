@@ -27,3 +27,8 @@ type Mutation {
 	leaveChat(id: ID!): Chat @auth
 	deleteChat(id: ID!): Boolean @auth
 }
+
+type Subscription {
+  chatAdded: Chat! @auth
+  chatRemoved: ID! @auth
+}

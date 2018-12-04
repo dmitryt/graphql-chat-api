@@ -1,4 +1,4 @@
-const { ApolloServer } = require('apollo-server-koa');
+const { ApolloServer, PubSub } = require('apollo-server-koa');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 
@@ -11,7 +11,20 @@ function init(app) {
     typeDefs,
     resolvers,
     schemaDirectives,
+    subscriptions: {
+      onConnect: async ({ authToken }) => {
+        const context = {};
+        try {
+          if (authToken) {
+            const { userId } = await jwt.verify(authToken, secret);
+            context.userId = userId;
+          }
+        } catch (e) {}
+        return context;
+      },
+    },
     context: async ({ ctx }) => {
+      console.log('OIOIOIOIOI', ctx.connection);
       try {
         const token = (ctx.headers.authorization || '').split(' ')[1];
         if (token) {
@@ -23,6 +36,7 @@ function init(app) {
     },
   });
   server.applyMiddleware({ app });
+  server.installSubscriptionHandlers(app);
   return server;
 }
 
