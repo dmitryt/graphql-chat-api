@@ -1,10 +1,13 @@
 const { ObjectId } = require('mongoose').Types;
+const { withFilter } = require('apollo-server-koa');
+
 const Chat = require('./chat.model');
 const User = require('../user/user.model');
 const Message = require('../message/message.model');
+const pubsub = require('../../services/pubsub');
 
-const CHAT_ADDED = 'CHAT_ADDED';
-const CHAT_REMOVED = 'CHAT_REMOVED';
+const CHAT_ADDED_SUBSCRIPTION = 'CHAT_ADDED_SUBSCRIPTION';
+const CHAT_REMOVED_SUBSCRIPTION = 'CHAT_REMOVED_SUBSCRIPTION';
 
 const chats = (_, args, ctx) => {
   const { type, query } = args;
@@ -27,15 +30,16 @@ const prepareUser = async (query, { ctx }) => {
 const chat = async (_, { id }, ctx) => prepareUser(Chat.findById(id), { ctx });
 
 const createChat = async (_, { input }, ctx) => {
-  const { userId, pubsub } = ctx.state;
+  console.log('CREATE CHAT', ctx.state);
+  const { userId } = ctx.state;
   const result = await Chat.create({ ...input, creator: userId, members: [userId] });
-  pubsub.publish(CHAT_ADDED, { postAdded: result });
+  pubsub.publish(CHAT_ADDED_SUBSCRIPTION, { chatAdded: result });
   return result;
 };
 
 const deleteChat = async (_, { id }) => {
   const result = await Chat.findByIdAndRemove(id).exec();
-  pubsub.publish(CHAT_REMOVED, { chatRemoved: id });
+  pubsub.publish(CHAT_REMOVED_SUBSCRIPTION, { chatRemoved: id });
   return result;
 };
 
@@ -66,14 +70,19 @@ const leaveChat = async (_, { id }, ctx) => {
 };
 
 // Subscriptions
-const chatAdded = async (_, __, ctx) => {
-  const { pubsub } = ctx.state;
-  pubsub.asyncIterator([CHAT_ADDED]);
+const chatAdded = {
+  subscribe: withFilter(
+    () => pubsub.asyncIterator(CHAT_ADDED_SUBSCRIPTION),
+    (payload) => {
+      console.log('FILTER', payload);
+    },
+  ),
 };
 
-const chatRemoved = async (_, __, ctx) => {
-  const { pubsub } = ctx.state;
-  pubsub.asyncIterator([CHAT_REMOVED]);
+const chatRemoved = {
+  subscribe() {
+    return pubsub.asyncIterator([CHAT_REMOVED_SUBSCRIPTION]);
+  },
 };
 
 const creator = ({ creator: _id }) => ({ _id });

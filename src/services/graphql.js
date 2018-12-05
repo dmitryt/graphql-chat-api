@@ -1,4 +1,4 @@
-const { ApolloServer, PubSub } = require('apollo-server-koa');
+const { ApolloServer } = require('apollo-server-koa');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 
@@ -19,16 +19,24 @@ function init(app) {
             const { userId } = await jwt.verify(authToken, secret);
             context.userId = userId;
           }
-        } catch (e) {}
+        } catch (e) {
+          console.error(e);
+        }
+        console.log('onConnect', context);
         return context;
       },
     },
-    context: async ({ ctx }) => {
-      console.log('OIOIOIOIOI', ctx.connection);
+    context: async ({ ctx, connection }) => {
+      if (connection) {
+        // check connection for metadata
+        console.log('context', connection.context);
+        return connection.context;
+      }
       try {
         const token = (ctx.headers.authorization || '').split(' ')[1];
         if (token) {
           const { userId } = await jwt.verify(token, secret);
+          console.log('HERE THERE', ctx.state);
           ctx.state.userId = userId;
         }
       } catch (e) {}
