@@ -8,7 +8,9 @@ class AuthDirective extends SchemaDirectiveVisitor {
     // eslint-disable-next-line no-param-reassign
     field.resolve = async (...args) => {
       const ctx = args[2];
-      if (!ctx.state.userId) {
+      // ctx.userId - in case of subscriptions
+      const userId = ctx.state ? ctx.state.userId : ctx.userId;
+      if (!userId) {
         ctx.throw(new AuthenticationError('Not authenticated'));
       }
       return resolve.call(this, ...args);

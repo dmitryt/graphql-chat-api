@@ -30,5 +30,5 @@ type Mutation {
 
 type Subscription {
   chatAdded: Chat! @auth
-  chatRemoved: ID! @auth
+  chatDeleted: ID! @auth
 }

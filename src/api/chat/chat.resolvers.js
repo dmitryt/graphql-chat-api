@@ -30,16 +30,16 @@ const prepareUser = async (query, { ctx }) => {
 const chat = async (_, { id }, ctx) => prepareUser(Chat.findById(id), { ctx });
 
 const createChat = async (_, { input }, ctx) => {
-  console.log('CREATE CHAT', ctx.state);
   const { userId } = ctx.state;
   const result = await Chat.create({ ...input, creator: userId, members: [userId] });
-  pubsub.publish(CHAT_ADDED_SUBSCRIPTION, { chatAdded: result });
+  pubsub.publish(CHAT_ADDED_SUBSCRIPTION, { chatAdded: result, sender: userId });
   return result;
 };
 
-const deleteChat = async (_, { id }) => {
+const deleteChat = async (_, { id }, ctx) => {
+  const { userId } = ctx.state;
   const result = await Chat.findByIdAndRemove(id).exec();
-  pubsub.publish(CHAT_REMOVED_SUBSCRIPTION, { chatRemoved: id });
+  pubsub.publish(CHAT_REMOVED_SUBSCRIPTION, { chatDeleted: id, sender: userId });
   return result;
 };
 
@@ -73,16 +73,15 @@ const leaveChat = async (_, { id }, ctx) => {
 const chatAdded = {
   subscribe: withFilter(
     () => pubsub.asyncIterator(CHAT_ADDED_SUBSCRIPTION),
-    (payload) => {
-      console.log('FILTER', payload);
-    },
+    (payload, variables, { userId }) => payload.sender !== userId,
   ),
 };
 
-const chatRemoved = {
-  subscribe() {
-    return pubsub.asyncIterator([CHAT_REMOVED_SUBSCRIPTION]);
-  },
+const chatDeleted = {
+  subscribe: withFilter(
+    () => pubsub.asyncIterator(CHAT_REMOVED_SUBSCRIPTION),
+    (payload, variables, { userId }) => payload.sender !== userId,
+  ),
 };
 
 const creator = ({ creator: _id }) => ({ _id });
@@ -100,7 +99,7 @@ module.exports = {
   },
   Subscription: {
     chatAdded,
-    chatRemoved,
+    chatDeleted,
   },
   Chat: {
     creator,
