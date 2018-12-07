@@ -3,8 +3,10 @@ module.exports = {
   secret: 'secretKey',
   tokenName: 'dcode-token',
   mongo: {
-    host: 'localhost',
-    port: 27017,
-    dbName: 'dogecodes-gqlchat-app',
+    user: process.env.DATABASE_USER || '',
+    password: process.env.DATABASE_PASSWORD || '',
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: process.env.DATABASE_PORT || 27017,
+    dbName: process.env.DATABASE_NAME || 'dogecodes-gqlchat-app',
   },
 };

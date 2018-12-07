@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
-module.exports = ({ host, port, dbName }, logger) => {
-  const uri = `mongodb://${host}:${port}/${dbName}`;
+module.exports = ({ host, port, user, password, dbName }, logger) => {
+  const credentials = user ? `${user}:${password}@` : '';
+  const uri = `mongodb://${credentials}${host}:${port}/${dbName}`;
   return new Promise((resolve, reject) => {
     mongoose.connection
       .on('error', error => reject(error))
