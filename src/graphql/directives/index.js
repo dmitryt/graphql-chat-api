@@ -11,7 +11,7 @@ class AuthDirective extends SchemaDirectiveVisitor {
       // ctx.userId - in case of subscriptions
       const userId = ctx.state ? ctx.state.userId : ctx.userId;
       if (!userId) {
-        ctx.throw(new AuthenticationError('Not authenticated'));
+        throw new AuthenticationError('Not authenticated');
       }
       return resolve.call(this, ...args);
     };

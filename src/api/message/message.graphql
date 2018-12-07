@@ -16,3 +16,7 @@ input NewMessage {
 extend type Mutation {
 	addMessage(input: NewMessage!): Message @auth
 }
+
+extend type Subscription {
+  messageAdded(id: ID!): Message! @auth
+}
