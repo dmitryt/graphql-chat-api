@@ -11,7 +11,6 @@ async function errorHandler(ctx, next) {
       type: 'error',
       message,
     };
-    ctx.app.emit('error', err, ctx);
   }
 }
 

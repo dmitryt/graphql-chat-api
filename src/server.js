@@ -13,7 +13,7 @@ const errorHandler = require('./middlewares/error');
 
 const PORT = config.get('port');
 const app = new Koa();
-const publicPaths = ['/graphiql', '/graphql'];
+const publicPaths = ['/graphql'];
 const secret = config.get('secret');
 
 async function main() {
@@ -29,7 +29,6 @@ async function main() {
   app.use(httpLogger());
   app.use(errorHandler());
   app.use(koaJwt({ secret }).unless({ path: publicPaths }));
-
   const server = graphqlService.init(app);
 
   const httpServer = app.listen({ port: PORT }, () => {
