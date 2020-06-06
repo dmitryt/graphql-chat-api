@@ -23,7 +23,7 @@
   "homepage": "https://github.com/dmitryt/graphql-chat-api#readme",
   "dependencies": {
     "@koa/cors": "^2.2.2",
-    "apollo-server-koa": "^2.2.0",
+    "apollo-server-koa": "^2.14.2",
     "bcrypt": "^2.0.1",
     "config": "^1.30.0",
     "graphql": "^0.13.2",
